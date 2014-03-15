@@ -803,26 +803,35 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
             wxString absFileName;
             wxFileName fn( abs_files.at(i) );
 
-            wxString filenameOnly    = fn.GetName();
-            wxString fullpathOnly    = fn.GetFullPath();
-            wxString fullnameOnly    = fn.GetFullName();
+            wxString filenameOnly    = fn.GetName();			//File name - ext
+            wxString fullpathOnly    = fn.GetFullPath();		//File path
+            wxString fullnameOnly    = fn.GetFullName();		//Filename + ext
             wxString compilationLine = ft.compilation_line;
 
             // use UNIX style slashes
-            absFileName = abs_files[i].GetFullPath();
+            absFileName = abs_files[i].GetFullPath();			//Full file path
             absFileName.Replace(wxT("\\"), wxT("/"));
             wxString relPath;
 
             relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);
-            relPath.Trim().Trim(false);
-
+            relPath.Trim().Trim(false).Prepend(wxT("./"));
+            
             wxString objPrefix = DoGetTargetPrefix(abs_files.at(i), cwd, cmp);
 
             compilationLine.Replace(wxT("$(FileName)"),     filenameOnly);
             compilationLine.Replace(wxT("$(FileFullName)"), fullnameOnly);
-            compilationLine.Replace(wxT("$(FileFullPath)"), fullpathOnly);
+            compilationLine.Replace(wxT("$(FileFullPath)"), relPath + fullnameOnly);
             compilationLine.Replace(wxT("$(FilePath)"),     relPath);
             
+            text << wxT("\n");
+			text << wxT("## ABS  ") << absFileName << wxT("\n");
+			text << wxT("## REL  ") << relPath << wxT("\n");
+			text << wxT("## FNO  ") << filenameOnly << wxT("\n");
+			text << wxT("## FFNO ") << fullnameOnly << wxT("\n");
+			text << wxT("## FPO  ") << fullpathOnly << wxT("\n");
+			text << wxT("## RPI  ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
+			text << wxT("\n");
+			
             // The object name is handled differently when using resource files
             if(ft.kind == Compiler::CmpFileKindResource)
                 compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + fullnameOnly);
