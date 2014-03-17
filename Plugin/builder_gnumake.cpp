@@ -823,15 +823,6 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString &confToBu
             compilationLine.Replace(wxT("$(FileFullPath)"), relPath + fullnameOnly);
             compilationLine.Replace(wxT("$(FilePath)"),     relPath);
             
-            text << wxT("\n");
-			text << wxT("## ABS  ") << absFileName << wxT("\n");
-			text << wxT("## REL  ") << relPath << wxT("\n");
-			text << wxT("## FNO  ") << filenameOnly << wxT("\n");
-			text << wxT("## FFNO ") << fullnameOnly << wxT("\n");
-			text << wxT("## FPO  ") << fullpathOnly << wxT("\n");
-			text << wxT("## RPI  ") << rel_paths.at(i).GetFullPath(wxPATH_UNIX) << wxT("\n");
-			text << wxT("\n");
-			
             // The object name is handled differently when using resource files
             if(ft.kind == Compiler::CmpFileKindResource)
                 compilationLine.Replace(wxT("$(ObjectName)"),   objPrefix + fullnameOnly);
